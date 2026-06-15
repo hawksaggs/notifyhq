@@ -1,9 +1,18 @@
+import asyncio
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
+from typing import TypedDict
 
 from fastapi import FastAPI
 
-from app.core.config import settings
+from app.core.config import ConfigSummary, settings
+
+
+class HealthStatus(TypedDict):
+    status: str
+    env: str
+    version: str
+    config: ConfigSummary
 
 
 @asynccontextmanager
@@ -21,7 +30,7 @@ async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
 
 app = FastAPI(
     title="NotifyHQ",
-    version="1.0.0",
+    version=settings.app_version,
     description="NotifyHQ is a notification service that allows you to send notifications to various channels such as email, SMS, and push notifications.",
     docs_url=None if settings.app_env == "production" else "/docs",
     redoc_url=None if settings.app_env == "production" else "/redoc",
@@ -35,3 +44,18 @@ async def health_check() -> dict[str, str]:
     Health check endpoint to verify that the application is running.
     """
     return {"status": "ok", "env": settings.app_env}
+
+
+@app.get("/health/detailed", tags=["Health"])
+async def health_detailed() -> HealthStatus:
+    """
+    Detailed health check endpoint to verify the status of various components.
+    """
+    # Here you can add checks for database connectivity, message broker status, etc.
+    await asyncio.sleep(0)  # Simulate some checks
+    return {
+        "status": "ok",
+        "env": settings.app_env,
+        "version": settings.app_version,
+        "config": settings.summary(),
+    }

@@ -7,6 +7,7 @@ class ConfigSummary(TypedDict):
     app_env: str
     app_host: str
     app_port: int
+    app_version: str
     log_level: str
     mongodb_db_name: str
 
@@ -17,6 +18,7 @@ class Settings(BaseSettings):
     app_env: str = "development"
     app_host: str = "0.0.0.0"
     app_port: int = 8000
+    app_version: str = "1.0.0"
     api_v1_prefix: str = "/api/v1"
     secret_key: str
     log_level: str = "INFO"
@@ -30,6 +32,7 @@ class Settings(BaseSettings):
             "app_env": self.app_env,
             "app_host": self.app_host,
             "app_port": self.app_port,
+            "app_version": self.app_version,
             "log_level": self.log_level,
             "mongodb_db_name": self.mongodb_db_name,
         }
