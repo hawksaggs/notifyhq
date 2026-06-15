@@ -1,4 +1,14 @@
+from typing import TypedDict
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class ConfigSummary(TypedDict):
+    app_env: str
+    app_host: str
+    app_port: int
+    log_level: str
+    mongodb_db_name: str
 
 
 class Settings(BaseSettings):
@@ -14,6 +24,15 @@ class Settings(BaseSettings):
     mongodb_url: str
     mongodb_db_name: str = "notifyhq"
     rabbitmq_url: str
+
+    def summary(self) -> ConfigSummary:
+        return {
+            "app_env": self.app_env,
+            "app_host": self.app_host,
+            "app_port": self.app_port,
+            "log_level": self.log_level,
+            "mongodb_db_name": self.mongodb_db_name,
+        }
 
 
 settings = Settings()
