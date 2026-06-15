@@ -6,6 +6,7 @@ from typing import TypedDict
 from fastapi import FastAPI
 
 from app.core.config import ConfigSummary, settings
+from app.templates.router import router as templates_router
 
 
 class HealthStatus(TypedDict):
@@ -36,8 +37,11 @@ app = FastAPI(
     redoc_url=None if settings.app_env == "production" else "/redoc",
     lifespan=lifespan,
 )
+# Routers
+app.include_router(templates_router, prefix=settings.api_v1_prefix)
 
 
+# Routes
 @app.get("/health", tags=["Health"])
 async def health_check() -> dict[str, str]:
     """
